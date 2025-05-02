@@ -1,0 +1,33 @@
+.persoane-container {
+    @apply h-screen w-screen bg-[#0a0f1f] text-white p-10 relative;
+  }
+  
+  .persoane-title {
+    @apply text-3xl font-bold mb-8 text-center;
+  }
+  
+  .persoane-table {
+    @apply w-full text-left border-collapse rounded overflow-hidden;
+  }
+  
+  .persoane-table th,
+  .persoane-table td {
+    @apply border border-gray-700 px-4 py-3;
+  }
+  
+  .persoane-table thead {
+    @apply bg-[#1f2a45] text-cyan-400;
+  }
+  
+  .persoane-table tbody tr:nth-child(even) {
+    @apply bg-[#131b2e];
+  }
+  
+  .btn-edit {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2;
+  }
+  
+  .btn-delete {
+    @apply bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded;
+  }
+  
