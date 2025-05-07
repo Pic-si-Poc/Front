@@ -5,7 +5,7 @@ import '../styles/persoane.css';
 
 const Persoane = () => {
   return (
-    <div className="persoane-container">
+    <div className="persoane-gradient">
       <LogoUSV />
       <Header />
       <h1 className="persoane-title">Persoane înregistrate</h1>

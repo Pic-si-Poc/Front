@@ -1,5 +1,6 @@
-.login-container {
-    @apply h-screen w-screen bg-[#0a0f1f] flex flex-col justify-center items-center relative text-white;
+.login-gradient {
+  @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
+  background-image: url('../assets/Fundal.jpeg');
   }
   
   
