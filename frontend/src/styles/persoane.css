@@ -1,9 +1,10 @@
-.persoane-container {
-    @apply h-screen w-screen bg-[#0a0f1f] text-white p-10 relative;
+.persoane-gradient {
+  @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
+  background-image: url('../assets/Fundal.jpeg');
   }
   
   .persoane-title {
-    @apply text-3xl font-bold mb-8 text-center;
+    @apply text-3xl font-bold mb-8 text-center absolute top-20;
   }
   
   .persoane-table {
