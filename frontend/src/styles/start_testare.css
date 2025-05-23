@@ -1,0 +1,8 @@
+.start_testare-gradient {
+    @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
+    background-image: url('../assets/Fundal.jpeg');
+    }
+    
+    .start_testare-title {
+      @apply text-3xl font-bold mb-8 text-center absolute top-20;
+    }
