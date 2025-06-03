@@ -6,6 +6,7 @@ import Persoane from './pages/Persoane';
 import Rezultate from './pages/Rezultate';
 import Statistici from './pages/Statistici';
 import StartTestare from './pages/StartTestare';
+import TestareLive from './pages/TestareLive';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/rezultate" element={<Rezultate />} />
       <Route path="/statistici" element={<Statistici />} />
       <Route path="/start-testare" element={<StartTestare />} />
+      <Route path="/testare-live" element={<TestareLive />} />
     </Routes>
   );
 }
