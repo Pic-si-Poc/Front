@@ -6,3 +6,11 @@
     .statistici-title {
       @apply text-3xl font-bold mb-8 text-center absolute top-20;
     }
+
+.statistici-grid {
+  @apply grid grid-cols-2 gap-8 justify-items-center;
+}
+
+.stat-card {
+  @apply bg-white/20 backdrop-blur-md p-8 rounded-xl flex flex-col items-center justify-center gap-4 text-xl font-semibold w-72 shadow-lg;
+}
