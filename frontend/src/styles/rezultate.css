@@ -1,23 +1,14 @@
 .rezultate-gradient {
-  @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
-  background-image: url('../assets/Fundal.jpeg');
-}
-    
-.rezultate-title {
-  @apply text-3xl font-bold mb-8 text-center absolute top-20;
+  @apply w-full max-w-7xl mx-auto flex flex-col items-center justify-start text-white p-10;
 }
 
-.rezultate-container {
-  @apply h-screen w-screen bg-[#0a0f1f] text-white p-10 relative;
+.rezultate-title {
+  /** @apply text-3xl font-bold mb-8 text-center absolute top-20;*/
+  @apply text-3xl font-bold mb-12 text-center;
 }
 
 .rezultate-table {
-  @apply w-full text-left border-separate border-spacing-0 rounded overflow-hidden;
-}
-
-.rezultate-table th,
-.rezultate-table td {
-  @apply border border-black/50 px-4 py-3;
+  @apply w-full text-left border-separate border-spacing-y-0 rounded overflow-hidden mb-10;
 }
 
 .rezultate-table thead {
@@ -25,9 +16,30 @@
 }
 
 .rezultate-table tbody tr {
-  @apply bg-white/20 backdrop-blur-md;
+  @apply bg-white/20 backdrop-blur-md border-b border-white/10;
+}
+
+.rezultate-table th, .rezultate-table td {
+  @apply border border-black/30 px-4 py-3;
 }
 
 .btn-detalii {
   @apply bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded transition;
 }
+
+.search-container {
+  @apply w-full flex justify-center mb-8;
+}
+
+.search-input {
+  @apply px-4 py-2 w-96 rounded bg-white/20 text-white border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+}
+
+.pagination {
+  @apply flex justify-center items-center gap-4 mt-8 text-white font-semibold;
+}
+
+.pagination button {
+  @apply bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
