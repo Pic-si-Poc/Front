@@ -7,6 +7,8 @@ import Rezultate from './pages/Rezultate';
 import Statistici from './pages/Statistici';
 import StartTestare from './pages/StartTestare';
 import TestareLive from './pages/TestareLive';
+import DetaliiRezultat from './pages/DetaliiRezultat';
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
       <Route path="/statistici" element={<Statistici />} />
       <Route path="/start-testare" element={<StartTestare />} />
       <Route path="/testare-live" element={<TestareLive />} />
+      <Route path="/rezultate/:id" element={<DetaliiRezultat />} />
     </Routes>
   );
 }

@@ -1,16 +1,19 @@
 .statistici-gradient {
-    @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
-    background-image: url('../assets/Fundal.jpeg');
-    }
-    
-    .statistici-title {
-      @apply text-3xl font-bold mb-8 text-center absolute top-20;
-    }
-
-.statistici-grid {
-  @apply grid grid-cols-2 gap-8 justify-items-center;
+  @apply w-full max-w-7xl mx-auto flex flex-col items-center justify-start text-white p-10;
 }
 
-.stat-card {
-  @apply bg-white/20 backdrop-blur-md p-8 rounded-xl flex flex-col items-center justify-center gap-4 text-xl font-semibold w-72 shadow-lg;
+.statistici-title {
+  @apply text-3xl font-bold mb-12 text-center;
+}
+
+.filters {
+  @apply flex gap-6 mb-10 justify-center;
+}
+
+.filter-select {
+  @apply px-4 py-2 rounded bg-white/20 text-black border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+}
+
+.chart-box {
+  @apply w-96 h-96 bg-white/20 rounded-xl backdrop-blur-md flex items-center justify-center shadow-lg p-4;
 }

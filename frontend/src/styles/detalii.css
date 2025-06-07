@@ -1,0 +1,47 @@
+.detalii-gradient {
+  @apply w-full max-w-7xl mx-auto flex flex-col items-center justify-start text-white p-10;
+}
+
+.detalii-title {
+  @apply text-3xl font-bold mb-12 text-center;
+}
+
+.testare-section {
+  @apply grid grid-cols-3 gap-8 justify-items-center mb-10;
+}
+
+.graph-container {
+  @apply w-96 h-64 bg-white/20 rounded-xl backdrop-blur-md flex flex-col items-center justify-center text-xl font-semibold shadow-lg p-2;
+}
+
+.graph-label {
+  @apply mt-4 text-lg font-semibold text-white;
+}
+
+.temperature-box {
+  @apply bg-white/20 backdrop-blur-md rounded-xl shadow-lg p-6 mb-10 w-64 mx-auto text-center mt-10;
+}
+
+.temperature-label {
+  @apply text-lg text-cyan-300 font-semibold mb-2;
+}
+
+.temperature-value {
+  @apply text-3xl font-bold text-white;
+}
+
+.status-section {
+  @apply flex flex-col items-center gap-4 mt-6;
+}
+
+.btn-stop {
+  @apply bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-semibold;
+}
+
+.info-box {
+  @apply bg-white/20 backdrop-blur-md rounded-xl shadow-lg p-3 mb-0 w-full max-w-xl text-center mx-auto text-white text-lg;
+}
+
+.btn-download {
+  @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-semibold transition mb-4;
+}

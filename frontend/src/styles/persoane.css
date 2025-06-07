@@ -1,34 +1,76 @@
 .persoane-gradient {
-  @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
-  background-image: url('../assets/Fundal.jpeg');
-  }
-  
-  .persoane-title {
-    @apply text-3xl font-bold mb-8 text-center absolute top-20;
-  }
-  
-  .persoane-table {
-    @apply w-full text-left border-collapse rounded overflow-hidden;
-  }
+  @apply w-full max-w-7xl mx-auto flex flex-col items-center justify-start text-white p-10;
+}
   
   .persoane-table th,
   .persoane-table td {
-    @apply border border-gray-700 px-4 py-3;
+  @apply border border-black/50 px-4 py-3;
   }
   
   .persoane-table thead {
     @apply bg-[#1f2a45] text-cyan-400;
   }
   
-  .persoane-table tbody tr:nth-child(even) {
-    @apply bg-[#131b2e];
-  }
+ .persoane-table tbody tr {
+  @apply bg-white/20 backdrop-blur-md border-b border-white/10;
+}
   
   .btn-edit {
-    @apply bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2;
-  }
+  @apply bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mr-2;
+}
+
+.btn-delete {
+  @apply bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded;
+}
   
-  .btn-delete {
-    @apply bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded;
-  }
-  
+.adauga-input {
+  @apply px-4 py-2 rounded bg-white/20 text-white border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+}
+
+.adauga-btn {
+  @apply px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded font-semibold;
+}
+
+.search-input {
+  @apply px-4 py-2 w-96 rounded bg-white/20 text-white border border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-300;
+}
+
+.pagination button {
+  @apply bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.persoane-title {
+  @apply text-3xl font-bold mb-12 text-center;
+}
+
+.form-section {
+  @apply flex flex-col gap-6 items-end mb-8;
+}
+
+.adauga-form {
+  @apply flex gap-4 w-full justify-center;
+}
+
+.search-container {
+  @apply w-full flex justify-center;
+}
+
+.persoane-table {
+  @apply w-full text-left border-separate border-spacing-0 rounded overflow-hidden mb-10 mt-5;
+}
+
+.pagination {
+  @apply flex justify-center items-center gap-4 mt-8 text-white font-semibold;
+}
+
+.modal {
+  @apply fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50;
+}
+
+.modal-content_edit {
+  @apply bg-[#1e2a47] p-8 rounded-xl text-black flex flex-col gap-4 w-96;
+}
+
+.modal-content_delete {
+  @apply bg-[#1e2a47] p-8 rounded-xl text-white flex flex-col gap-4 w-96;
+}

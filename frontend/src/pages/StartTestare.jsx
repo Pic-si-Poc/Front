@@ -4,8 +4,6 @@ import Header from '../components/Header';
 import '../styles/start_testare.css';
 import { useNavigate } from 'react-router-dom';
 
-  
-
 const StartTestare = () => {
   const navigate = useNavigate();
 
@@ -13,6 +11,7 @@ const StartTestare = () => {
     e.preventDefault();
     navigate('/testare-live');
   };
+
   return (
     <div className="start-gradient">
       <LogoUSV />
@@ -29,6 +28,11 @@ const StartTestare = () => {
           </select>
         </label>
 
+        <label>
+          Beneficiar:
+          <input type="text" className="start-input" />
+        </label>
+        
         <label>
           Data Testării:
           <input type="date" className="start-input" />

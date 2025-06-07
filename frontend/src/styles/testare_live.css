@@ -1,4 +1,4 @@
-.testare-gradient {
+/**.testare-gradient {
   @apply h-screen w-screen relative flex flex-col items-center justify-center text-white bg-cover bg-center;
   background-image: url('../assets/Fundal.jpeg');
 }
@@ -6,10 +6,6 @@
 .testare-title {
   @apply text-3xl font-bold mb-8 text-center absolute top-20;
 }
-
-/**.testare-section {
-  @apply grid grid-cols-2 gap-10 justify-items-center mb-10;
-}*/
 
 .testare-section {
   @apply grid grid-cols-3 gap-8 justify-items-center mb-10 mt-20;
@@ -31,14 +27,6 @@
   @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold;
 }
 
-/**.graph-container {
-  @apply w-96 h-60 bg-white/20 rounded-xl backdrop-blur-md flex flex-col items-center justify-center text-xl font-semibold shadow-lg p-4;
-}
-
-.graph-label {
-  @apply mt-4 text-lg font-semibold text-white;
-}*/
-
 .graph-container {
   @apply w-96 h-60 bg-white/20 rounded-xl backdrop-blur-md flex flex-col items-center justify-center text-xl font-semibold shadow-lg p-4;
 }
@@ -57,4 +45,68 @@
 
 .temperature-value {
   @apply text-3xl font-bold text-white;
+}
+*/
+
+.testare-gradient {
+  @apply w-full max-w-7xl mx-auto flex flex-col items-center justify-start text-white p-10;
+}
+
+.testare-title {
+  @apply text-3xl font-bold mb-12 text-center;
+}
+
+.charts-grid {
+  @apply grid grid-cols-3 gap-8 justify-items-center mt-10 mb-0;
+}
+
+.graph-container {
+  @apply w-96 h-96 bg-white/20 rounded-xl backdrop-blur-md flex flex-col items-center justify-center text-xl font-semibold shadow-lg p-4;
+}
+
+.graph-label {
+  @apply mt-4 text-lg font-semibold text-white;
+}
+
+.temperature-box {
+  @apply bg-white/20 backdrop-blur-md rounded-xl shadow-lg p-6 mb-6 w-64 mx-auto text-center;
+}
+
+.temperature-label {
+  @apply text-lg text-cyan-300 font-semibold mb-2;
+}
+
+.temperature-value {
+  @apply text-3xl font-bold text-white;
+}
+
+.marcaje-buttons {
+  @apply flex justify-center gap-8 mb-8;
+}
+
+.btn-sincer {
+  @apply px-4 py-2 rounded font-semibold transition;
+  background-color: #8ace00;
+}
+
+.btn-nesincer {
+  @apply px-4 py-2 rounded font-semibold transition;
+  background-color: #800020;
+}
+
+.btn-control {
+  @apply px-4 py-2 rounded font-semibold transition;
+  background-color: #ffae42;
+}
+
+.marcaje-list {
+  @apply mt-8 bg-white/20 backdrop-blur-md p-6 rounded-xl shadow-lg text-center;
+}
+
+.status-section {
+  @apply flex flex-col items-center gap-4 mt-6;
+}
+
+.btn-stop {
+  @apply bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-semibold;
 }
