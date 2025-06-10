@@ -13,7 +13,7 @@ const Dashboard = () => {
     <div className="dashboard-gradient">
       <LogoUSV />
       <Header />
-      <h1 className="dashboard-title absolute top-20">POLITEST</h1>
+      <h1 className="dashboard-title absolute top-20">PoliTest</h1>
       <div className="dashboard-buttons">
         <button onClick={() => navigate('/persoane')} className="dash-btn"><UserRound />PERSOANE</button>
         <button onClick={() => navigate('/rezultate')} className="dash-btn"><BookOpen />REZULTATE</button>
