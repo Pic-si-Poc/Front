@@ -14,6 +14,7 @@ import {
   Legend,
 } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 ChartJS.register(
   CategoryScale,
@@ -27,6 +28,16 @@ ChartJS.register(
 
 const TestareLive = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id_exam } = location.state || {};
+
+  useEffect(() => {
+    if (!id_exam) {
+      console.warn("ID-ul examinării lipsește!");
+    } else {
+      console.log("ID-ul examinării primit:", id_exam);
+    }
+  }, [id_exam]);
 
   const [labels, setLabels] = useState([]);
   const [emgData, setEmgData] = useState([]);
@@ -36,30 +47,27 @@ const TestareLive = () => {
   const [marcaje, setMarcaje] = useState([]);
 
   const bufferRef = useRef({ labels: [], emg: [], ecg: [], umiditate: [] });
-  const windowSize = 100; // aprox 10 secunde la 100ms sampling
+  const windowSize = 100;
   const timeRef = useRef(0);
+  const startTimestampRef = useRef(Date.now());
 
+  useEffect(() => {
+    const intervalData = setInterval(() => {
+      timeRef.current += 1;
+      bufferRef.current.labels.push(timeRef.current);
+      bufferRef.current.emg.push(Math.floor(Math.random() * 100));
+      bufferRef.current.ecg.push(50 + Math.floor(Math.random() * 50));
+      bufferRef.current.umiditate.push(20 + Math.floor(Math.random() * 30));
+      if (bufferRef.current.labels.length > windowSize) {
+        bufferRef.current.labels.shift();
+        bufferRef.current.emg.shift();
+        bufferRef.current.ecg.shift();
+        bufferRef.current.umiditate.shift();
+      }
+    }, 100);
+    return () => clearInterval(intervalData);
+  }, []);
 
-  // Simulare senzor - rapid, 100ms
- useEffect(() => {
-  const intervalData = setInterval(() => {
-    timeRef.current += 1;
-    bufferRef.current.labels.push(timeRef.current);
-    bufferRef.current.emg.push(Math.floor(Math.random() * 100));
-    bufferRef.current.ecg.push(50 + Math.floor(Math.random() * 50));
-    bufferRef.current.umiditate.push(20 + Math.floor(Math.random() * 30));
-    if (bufferRef.current.labels.length > windowSize) {
-      bufferRef.current.labels.shift();
-      bufferRef.current.emg.shift();
-      bufferRef.current.ecg.shift();
-      bufferRef.current.umiditate.shift();
-    }
-  }, 100);
-  return () => clearInterval(intervalData);
-}, []);
-
-
-  // Refresh grafic - 500ms
   useEffect(() => {
     const intervalRender = setInterval(() => {
       setLabels([...bufferRef.current.labels]);
@@ -71,9 +79,52 @@ const TestareLive = () => {
     return () => clearInterval(intervalRender);
   }, []);
 
+  useEffect(() => {
+    const intervalSend = setInterval(() => {
+      if (!id_exam) return;
+
+      const timestamp = new Date().toISOString();
+      const valoare_emg = bufferRef.current.emg.slice(-1)[0];
+      const valoare_ecg = bufferRef.current.ecg.slice(-1)[0];
+      const valoare_umiditate = bufferRef.current.umiditate.slice(-1)[0];
+
+      fetch('http://localhost:5000/api/date', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_exam, timestamp, valoare_emg, valoare_ecg, valoare_umiditate })
+      })
+        .then(res => res.json())
+        .then(data => console.log('Date salvate:', data))
+        .catch(err => console.error('Eroare la salvarea datelor:', err));
+    }, 1000);
+
+    return () => clearInterval(intervalSend);
+  }, [id_exam]);
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
   const handleMarcaj = (tip) => {
-    const timestamp = bufferRef.current.labels.slice(-1)[0] || 0;
-    setMarcaje((prev) => [...prev, { timestamp, tip }]);
+    const timestamp = new Date().toISOString();
+    const id_intr_exam = `${id_exam}-${tip}-${timestamp}`;
+    const elapsed = Date.now() - startTimestampRef.current;
+    const afisajTimp = formatTime(elapsed);
+
+    setMarcaje((prev) => [...prev, { timestamp: afisajTimp, tip }]);
+
+    fetch('http://localhost:5000/api/marcaje', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_intr_exam, timestamp })
+    })
+      .then(res => res.json())
+      .then(data => console.log('Marcaj salvat:', data))
+      .catch(err => console.error('Eroare marcaj:', err));
   };
 
   const commonOptions = {
@@ -121,7 +172,7 @@ const TestareLive = () => {
         <ul>
           {marcaje.map((m, index) => (
             <li key={index}>
-              {m.tip} — Timp: {m.timestamp}s
+              {m.tip} — Timp: {m.timestamp}
             </li>
           ))}
         </ul>
