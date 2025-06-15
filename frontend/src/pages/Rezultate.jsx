@@ -12,7 +12,7 @@ const Rezultate = () => {
     { id: 2, nume: 'Ionescu', prenume: 'Maria', beneficiar: 'Firma X', dataTestare: '2025-06-02' },
     { id: 3, nume: 'Vasilescu', prenume: 'Andrei', beneficiar: 'Poliția Y', dataTestare: '2025-06-03' },
     { id: 4, nume: 'Georgescu', prenume: 'Elena', beneficiar: 'SC Test Beneficiar 2', dataTestare: '2025-06-04' },
-    { id: 5, nume: 'Stan', prenume: 'Radu', beneficiar: 'Firma X', dataTestare: '2025-06-05' },
+    { id: 5, nume: 'Stan', prenume: 'Radu', beneficiar: 'Firma X', dataTestare: '2025-06-06' },
     { id: 6, nume: 'Dumitrescu', prenume: 'Ana', beneficiar: 'Firma Z', dataTestare: '2025-06-06' },
   ];
 
@@ -31,8 +31,10 @@ const Rezultate = () => {
   };
 
   const filtered = rezultate
-    .filter(r => r.nume.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => a.nume.localeCompare(b.nume));
+    /**.filter(r => r.nume.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => a.nume.localeCompare(b.nume));*/
+    .sort((a, b) => new Date(b.dataTestare) - new Date(a.dataTestare));
+
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const indexStart = (currentPage - 1) * itemsPerPage;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import LogoUSV from '../components/LogoUSV';
 import Header from '../components/Header';
@@ -26,33 +26,57 @@ ChartJS.register(
 );
 
 const DetaliiRezultat = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id_exam
   const navigate = useNavigate();
+  const [examinare, setExaminare] = useState(null);
+  const [date, setDate] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Simulăm datele reale:
-  const labels = Array.from({ length: 20 }, (_, i) => i + 1);
-  const emgData = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100));
-  const ecgData = Array.from({ length: 20 }, () => 50 + Math.floor(Math.random() * 50));
-  const umiditateData = Array.from({ length: 20 }, () => 20 + Math.floor(Math.random() * 30));
+  useEffect(() => {
+    const fetchExaminare = async () => {
+      try {
+        const res1 = await fetch(`http://localhost:5000/api/examinare`);
+        const all = await res1.json();
+        const exam = all.examinari.find((e) => e.id_exam === id);
+        setExaminare(exam);
+      } catch (err) {
+        console.error('Eroare la preluare examinare:', err);
+      }
+    };
+
+    const fetchDate = async () => {
+      try {
+        const res2 = await fetch(`http://localhost:5000/api/date`);
+        const allDate = await res2.json();
+        const dateFiltrate = allDate.date.filter((d) => d.id_exam === id);
+        setDate(dateFiltrate);
+      } catch (err) {
+        console.error('Eroare la preluare date:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExaminare();
+    fetchDate();
+  }, [id]);
+
+  const labels = date.map((_, idx) => idx + 1);
+  const emgData = date.map((d) => d.valoare_emg);
+  const ecgData = date.map((d) => d.valoare_ecg);
+  const umiditateData = date.map((d) => d.valoare_umiditate);
   const temperatura = (36 + Math.random() * 2).toFixed(2);
 
-  const dataExport = {
-    idTest: id,
-    nume: 'Popescu',
-    prenume: 'Ion',
-    beneficiar: 'Firma X',
-    dataTestare: new Date().toLocaleDateString(),
-    rezultate: {
-      emg: emgData,
-      ecg: ecgData,
-      umiditate: umiditateData,
-      temperatura: temperatura
-    }
-  };
-
   const handleDownload = () => {
+    const exportData = {
+      idTest: id,
+      ...examinare,
+      rezultate: { emgData, ecgData, umiditateData, temperatura },
+    };
     const element = document.createElement('a');
-    const file = new Blob([JSON.stringify(dataExport, null, 2)], { type: 'application/json' });
+    const file = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: 'application/json',
+    });
     element.href = URL.createObjectURL(file);
     element.download = `RezultatTest_${id}.json`;
     document.body.appendChild(element);
@@ -65,18 +89,22 @@ const DetaliiRezultat = () => {
     scales: { y: { min: 0, max: 100 } },
   };
 
+  if (loading) return <p style={{ color: 'white' }}>Se încarcă datele...</p>;
+
   return (
     <div className="detalii-gradient">
       <LogoUSV />
       <Header />
       <h1 className="detalii-title">Detalii Test #{id}</h1>
 
-      <div className="info-box">
-        <p><strong>Nume:</strong> {dataExport.nume}</p>
-        <p><strong>Prenume:</strong> {dataExport.prenume}</p>
-        <p><strong>Beneficiar:</strong> {dataExport.beneficiar}</p>
-        <p><strong>Data Testare:</strong> {dataExport.dataTestare}</p>
-      </div>
+      {examinare && (
+        <div className="info-box">
+          <p><strong>ID Examinat:</strong> {examinare.id_examinat}</p>
+          <p><strong>Beneficiar:</strong> {examinare.nume_beneficiar}</p>
+          <p><strong>Data Start:</strong> {new Date(examinare.data_start).toLocaleString()}</p>
+          <p><strong>Data Final:</strong> {new Date(examinare.data_end).toLocaleString()}</p>
+        </div>
+      )}
 
       <div className="testare-section">
         <div className="graph-container">
