@@ -4,6 +4,7 @@ import LogoUSV from '../components/LogoUSV';
 import Header from '../components/Header';
 import '../styles/detalii.css';
 import { Line } from 'react-chartjs-2';
+import axios from 'axios';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,11 +27,22 @@ ChartJS.register(
 );
 
 const DetaliiRezultat = () => {
-  const { id } = useParams(); // id_exam
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/'); // redirecționează spre login dacă nu e logat
+        }
+      });
+  }, []);
+  const { id } = useParams(); // id_exam
   const [examinare, setExaminare] = useState(null);
   const [date, setDate] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [marcaje, setMarcaje] = useState([]);
+
 
   useEffect(() => {
     const fetchExaminare = async () => {
@@ -57,8 +69,18 @@ const DetaliiRezultat = () => {
       }
     };
 
+    const fetchMarcaje = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/marcaje/${id}`);
+        setMarcaje(res.data.marcaje);
+      } catch (err) {
+        console.error('Eroare la încărcarea marcajelor:', err);
+      }
+    };
+
     fetchExaminare();
     fetchDate();
+    fetchMarcaje();
   }, [id]);
 
   const labels = date.map((_, idx) => idx + 1);
@@ -127,6 +149,22 @@ const DetaliiRezultat = () => {
         <p className="temperature-label">Temperatură:</p>
         <p className="temperature-value">{temperatura} °C</p>
       </div>
+
+      <div className="marcaje-section">
+        <h2 className="text-white text-xl mb-2 marcaje-title">Marcaje înregistrate:</h2>
+        {marcaje.length === 0 ? (
+          <p className="text-white">Nu există marcaje.</p>
+        ) : (
+          <ul className="text-white space-y-1 marcaje-list">
+            {marcaje.map((m, index) => (
+              <li key={index}>
+                [{new Date(m.timestamp).toLocaleTimeString()}] - <strong>{m.tip}</strong>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
 
       <div className="status-section">
         <button className="btn-download" onClick={handleDownload}>Descarcă Rezultatul</button>

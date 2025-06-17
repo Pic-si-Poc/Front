@@ -45,3 +45,25 @@
 .btn-download {
   @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded font-semibold transition mb-4;
 }
+
+.marcaje-section {
+  margin: 2rem auto;
+  max-width: 600px;
+  color: white;
+  background: rgba(255,255,255,0.05);
+  padding: 1rem;
+  border-radius: 8px;
+}
+.marcaje-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.marcaje-list {
+  list-style: none;
+  padding-left: 0;
+}
+.marcaj-item {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 0.3rem;
+}

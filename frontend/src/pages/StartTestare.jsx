@@ -7,6 +7,15 @@ import axios from 'axios';
 
 const StartTestare = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/'); // redirecționează spre login dacă nu e logat
+        }
+      });
+  }, []);
   const [persoane, setPersoane] = useState([]);
   const [persoana, setPersoana] = useState('');
   const [data, setData] = useState('');
@@ -26,10 +35,16 @@ const StartTestare = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!persoana || !beneficiar) {
+      alert('Te rugăm să completezi toate câmpurile.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:5000/api/examinare/start', {
         id_examinat: persoana,
         nume_beneficiar: beneficiar,
+        data_exam: data
       });
 
       const id_exam = response.data.id_exam;
