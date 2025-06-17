@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LogoUSV from '../components/LogoUSV';
 import Header from '../components/Header';
 import '../styles/statistici.css';
+import axios from 'axios';
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,12 +15,41 @@ import {
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Statistici = () => {
-  const allResults = [
-    { id: 1, nume: 'Popescu', beneficiar: 'Firma X', data: '2025-06-03', raspunsuri: { sincer: 15, nesincer: 3, control: 2 } },
-    { id: 2, nume: 'Ionescu', beneficiar: 'Politia', data: '2025-06-03', raspunsuri: { sincer: 10, nesincer: 5, control: 1 } },
-    { id: 3, nume: 'Popescu', beneficiar: 'Firma X', data: '2025-06-01', raspunsuri: { sincer: 12, nesincer: 2, control: 1 } },
-    { id: 4, nume: 'Stan', beneficiar: 'Firma Y', data: '2025-05-30', raspunsuri: { sincer: 9, nesincer: 1, control: 0 } },
-  ];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/');
+        }
+      });
+  }, []);
+
+  const [allResults, setAllResults] = useState([]);
+
+  // Funcție de formatare sigură
+  const formatResults = (rows = []) =>
+    rows.map(r => ({
+      id: r.id_exam,
+      nume: r.nume || 'Necunoscut',
+      beneficiar: r.beneficiar || 'Necunoscut',
+      data: r.data || '',
+      raspunsuri: {
+        sincer: r.sincer ?? 0,
+        nesincer: r.nesincer ?? 0,
+        control: r.control ?? 0
+      }
+    }));
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/examinare/statistici', { withCredentials: true })
+      .then(res => {
+        console.log('📊 Date statistici primite:', res.data);
+        setAllResults(formatResults(res.data.statistici));
+      })
+      .catch(err => console.error('Eroare la încărcarea statisticilor:', err));
+  }, []);
 
   const [filters, setFilters] = useState({ nume: '', beneficiar: '', data: '' });
 
@@ -32,10 +63,13 @@ const Statistici = () => {
     (filters.data === '' || r.data === filters.data)
   );
 
-  const total = filteredResults.reduce((acc, r) => ({
-    sincer: acc.sincer + r.raspunsuri.sincer,
-    nesincer: acc.nesincer + r.raspunsuri.nesincer,
-  }), { sincer: 0, nesincer: 0 });
+  const total = filteredResults.reduce((acc, r) => {
+    const rasp = r.raspunsuri || { sincer: 0, nesincer: 0 };
+    return {
+      sincer: acc.sincer + rasp.sincer,
+      nesincer: acc.nesincer + rasp.nesincer
+    };
+  }, { sincer: 0, nesincer: 0 });
 
   const data = {
     labels: ['Sincer', 'Nesincer'],

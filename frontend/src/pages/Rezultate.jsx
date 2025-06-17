@@ -1,28 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LogoUSV from '../components/LogoUSV';
 import Header from '../components/Header';
 import '../styles/rezultate.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Rezultate = () => {
   const navigate = useNavigate();
-
-  const initialResults = [
-    { id: 1, nume: 'Popescu', prenume: 'Ion', beneficiar: 'SC Test Beneficiar 1', dataTestare: '2025-06-01' },
-    { id: 2, nume: 'Ionescu', prenume: 'Maria', beneficiar: 'Firma X', dataTestare: '2025-06-02' },
-    { id: 3, nume: 'Vasilescu', prenume: 'Andrei', beneficiar: 'Poliția Y', dataTestare: '2025-06-03' },
-    { id: 4, nume: 'Georgescu', prenume: 'Elena', beneficiar: 'SC Test Beneficiar 2', dataTestare: '2025-06-04' },
-    { id: 5, nume: 'Stan', prenume: 'Radu', beneficiar: 'Firma X', dataTestare: '2025-06-06' },
-    { id: 6, nume: 'Dumitrescu', prenume: 'Ana', beneficiar: 'Firma Z', dataTestare: '2025-06-06' },
-  ];
-
-  const [rezultate, setRezultate] = useState(initialResults);
+  const [rezultate, setRezultate] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handleDetalii = (id) => {
-    navigate(`/rezultate/${id}`);
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/');
+        }
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/examinare/rezultate')
+      .then(res => {
+        setRezultate(res.data.rezultate || []);
+      })
+      .catch(err => {
+        console.error('Eroare la încărcarea rezultatelor:', err);
+      });
+  }, []);
+
+  const handleDetalii = (id_exam) => {
+    navigate(`/rezultate/${id_exam}`);
   };
 
   const handleSearchChange = (e) => {
@@ -31,10 +41,8 @@ const Rezultate = () => {
   };
 
   const filtered = rezultate
-    /**.filter(r => r.nume.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => a.nume.localeCompare(b.nume));*/
-    .sort((a, b) => new Date(b.dataTestare) - new Date(a.dataTestare));
-
+    .filter(r => r.nume.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => new Date(b.data_start) - new Date(a.data_start));
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const indexStart = (currentPage - 1) * itemsPerPage;
@@ -68,13 +76,13 @@ const Rezultate = () => {
         </thead>
         <tbody>
           {displayed.map((r) => (
-            <tr key={r.id}>
+            <tr key={r.id_exam}>
               <td>{r.nume}</td>
               <td>{r.prenume}</td>
-              <td>{r.beneficiar}</td>
-              <td>{r.dataTestare}</td>
+              <td>{r.nume_beneficiar}</td>
+              <td>{new Date(r.dataTestare).toLocaleDateString()}</td>
               <td>
-                <button className="btn-detalii" onClick={() => handleDetalii(r.id)}>
+                <button className="btn-detalii" onClick={() => handleDetalii(r.id_exam)}>
                   Vezi Detalii
                 </button>
               </td>

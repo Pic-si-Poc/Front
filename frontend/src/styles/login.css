@@ -23,4 +23,9 @@
   .login-button {
     @apply px-4 py-2 rounded bg-blue-400 hover:bg-blue-800 text-white font-semibold;
   }
+
+  .create-account-link
+  {
+    @apply text-blue-400 hover:text-blue-600 cursor-pointer;
+  }
   

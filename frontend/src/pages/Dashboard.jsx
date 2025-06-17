@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../styles/dashboard.css';
 import LogoUSV from '../components/LogoUSV';
 import Header from '../components/Header';
 import { UserRound, ChartPie, BookOpen, Flag } from 'lucide-react';
-
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
 const Dashboard = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/'); // redirecționează spre login dacă nu e logat
+        }
+      });
+  }, []);
   return (
     <div className="dashboard-gradient">
       <LogoUSV />

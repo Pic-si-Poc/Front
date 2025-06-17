@@ -13,8 +13,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 ChartJS.register(
   CategoryScale,
@@ -30,6 +30,15 @@ const TestareLive = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id_exam } = location.state || {};
+
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
+      .then(res => {
+        if (!res.data.loggedIn) {
+          navigate('/'); // redirecționează spre login dacă nu e logat
+        }
+      });
+  }, []);
 
   useEffect(() => {
     if (!id_exam) {
@@ -111,7 +120,6 @@ const TestareLive = () => {
 
   const handleMarcaj = (tip) => {
     const timestamp = new Date().toISOString();
-    const id_intr_exam = `${id_exam}-${tip}-${timestamp}`;
     const elapsed = Date.now() - startTimestampRef.current;
     const afisajTimp = formatTime(elapsed);
 
@@ -120,12 +128,13 @@ const TestareLive = () => {
     fetch('http://localhost:5000/api/marcaje', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_intr_exam, timestamp })
+      body: JSON.stringify({ id_exam, timestamp, tip }) 
     })
       .then(res => res.json())
       .then(data => console.log('Marcaj salvat:', data))
       .catch(err => console.error('Eroare marcaj:', err));
   };
+
 
   const commonOptions = {
     responsive: true,
