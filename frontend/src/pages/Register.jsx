@@ -41,7 +41,6 @@ const Register = () => {
   return (
     <div className="login-gradient">
       <LogoUSV />
-      <Header />
       <div className="login-container">
         <h2 className="login-title">Creare Cont</h2>
         <form className="login-form" onSubmit={handleRegister}>
@@ -83,7 +82,7 @@ const Register = () => {
           <button type="submit" className="login-btn">Creează cont</button>
         </form>
         <p className="create-account-link">
-          Ai deja un cont? <span onClick={() => navigate('/login')}>Autentifică-te</span>
+          Ai deja un cont? <span onClick={() => navigate('/')}>Autentifică-te</span>
         </p>
       </div>
     </div>
