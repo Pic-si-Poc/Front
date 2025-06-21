@@ -35,18 +35,10 @@ const TestareLive = () => {
     axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
       .then(res => {
         if (!res.data.loggedIn) {
-          navigate('/'); // redirecționează spre login dacă nu e logat
+          navigate('/');
         }
       });
   }, []);
-
-  useEffect(() => {
-    if (!id_exam) {
-      console.warn("ID-ul examinării lipsește!");
-    } else {
-      console.log("ID-ul examinării primit:", id_exam);
-    }
-  }, [id_exam]);
 
   const [labels, setLabels] = useState([]);
   const [emgData, setEmgData] = useState([]);
@@ -56,25 +48,36 @@ const TestareLive = () => {
   const [marcaje, setMarcaje] = useState([]);
 
   const bufferRef = useRef({ labels: [], emg: [], ecg: [], umiditate: [] });
-  const windowSize = 100;
+  const windowSize = 100; // 10 secunde * 10 puncte/sec = 100
   const timeRef = useRef(0);
   const startTimestampRef = useRef(Date.now());
 
   useEffect(() => {
-    const intervalData = setInterval(() => {
-      timeRef.current += 1;
-      bufferRef.current.labels.push(timeRef.current);
-      bufferRef.current.emg.push(Math.floor(Math.random() * 100));
-      bufferRef.current.ecg.push(50 + Math.floor(Math.random() * 50));
-      bufferRef.current.umiditate.push(20 + Math.floor(Math.random() * 30));
-      if (bufferRef.current.labels.length > windowSize) {
-        bufferRef.current.labels.shift();
-        bufferRef.current.emg.shift();
-        bufferRef.current.ecg.shift();
-        bufferRef.current.umiditate.shift();
-      }
-    }, 100);
-    return () => clearInterval(intervalData);
+    const interval = setInterval(() => {
+      axios.get("http://localhost:5000/api/live-data").then((res) => {
+        const { ecg, emg, humidity, temperature } = res.data;
+
+        console.log("ECG frontend:", ecg, "| EMG frontend:", emg);
+
+        if (ecg == null || emg == null || humidity == null || temperature == null) return;
+
+        timeRef.current += 0.1;
+
+        bufferRef.current.labels.push(timeRef.current.toFixed(1));
+        bufferRef.current.emg.push(parseInt(emg));
+        bufferRef.current.ecg.push(parseInt(ecg));
+        bufferRef.current.umiditate.push(parseFloat(humidity));
+        setTemperatura(parseFloat(temperature).toFixed(2));
+
+        if (bufferRef.current.labels.length > windowSize) {
+          bufferRef.current.labels.shift();
+          bufferRef.current.emg.shift();
+          bufferRef.current.ecg.shift();
+          bufferRef.current.umiditate.shift();
+        }
+      });
+    }, 100); // 0.1 secunde
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -83,8 +86,7 @@ const TestareLive = () => {
       setEmgData([...bufferRef.current.emg]);
       setEcgData([...bufferRef.current.ecg]);
       setUmiditateData([...bufferRef.current.umiditate]);
-      setTemperatura((36 + Math.random() * 2).toFixed(2));
-    }, 500);
+    }, 100);
     return () => clearInterval(intervalRender);
   }, []);
 
@@ -101,45 +103,30 @@ const TestareLive = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_exam, timestamp, valoare_emg, valoare_ecg, valoare_umiditate })
-      })
-        .then(res => res.json())
-        .then(data => console.log('Date salvate:', data))
-        .catch(err => console.error('Eroare la salvarea datelor:', err));
-    }, 1000);
-
+      });
+    }, 100);
     return () => clearInterval(intervalSend);
   }, [id_exam]);
-
-  const formatTime = (ms) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const seconds = String(totalSeconds % 60).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-  };
 
   const handleMarcaj = (tip) => {
     const timestamp = new Date().toISOString();
     const elapsed = Date.now() - startTimestampRef.current;
-    const afisajTimp = formatTime(elapsed);
+    const afisajTimp = new Date(elapsed).toISOString().substr(11, 8);
 
     setMarcaje((prev) => [...prev, { timestamp: afisajTimp, tip }]);
 
     fetch('http://localhost:5000/api/marcaje', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_exam, timestamp, tip }) 
-    })
-      .then(res => res.json())
-      .then(data => console.log('Marcaj salvat:', data))
-      .catch(err => console.error('Eroare marcaj:', err));
+      body: JSON.stringify({ id_exam, timestamp, tip })
+    });
   };
 
-
-  const commonOptions = {
-    responsive: true,
-    plugins: { legend: { display: false } },
-    scales: { y: { min: 0, max: 100 } },
+  const commonX = {
+    type: 'linear',
+    title: { display: true, text: 'Timp (secunde)' },
+    min: Math.max(0, timeRef.current - 10),
+    max: timeRef.current,
   };
 
   return (
@@ -150,17 +137,47 @@ const TestareLive = () => {
 
       <div className="charts-grid">
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: emgData, borderColor: '#00f5ff' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: emgData, borderColor: '#00f5ff' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: commonX,
+                y: { min: 100, max: 400 }
+              }
+            }}
+          />
           <p className="graph-label">EMG</p>
         </div>
 
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: ecgData, borderColor: '#ff6384' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: ecgData, borderColor: '#ff6384' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: commonX,
+                y: { min: 300, max: 800 }
+              }
+            }}
+          />
           <p className="graph-label">ECG</p>
         </div>
 
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: umiditateData, borderColor: '#36a2eb' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: umiditateData, borderColor: '#36a2eb' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: commonX,
+                y: { min: 80, max: 100 }
+              }
+            }}
+          />
           <p className="graph-label">Umiditate</p>
         </div>
       </div>
