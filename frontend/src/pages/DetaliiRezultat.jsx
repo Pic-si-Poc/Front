@@ -130,20 +130,42 @@ const DetaliiRezultat = () => {
 
       <div className="testare-section">
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: emgData, borderColor: '#00f5ff' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: emgData, borderColor: '#00f5ff' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: { y: { min: 150, max: 550 } }
+            }}
+          />
           <p className="graph-label">EMG</p>
         </div>
 
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: ecgData, borderColor: '#ff6384' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: ecgData, borderColor: '#ff6384' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: { y: { min: 300, max: 800 } }
+            }}
+          />
           <p className="graph-label">ECG</p>
         </div>
 
         <div className="graph-container">
-          <Line data={{ labels, datasets: [{ data: umiditateData, borderColor: '#36a2eb' }] }} options={commonOptions} />
+          <Line
+            data={{ labels, datasets: [{ data: umiditateData, borderColor: '#36a2eb' }] }}
+            options={{
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: { y: { min: 80, max: 100 } }
+            }}
+          />
           <p className="graph-label">Umiditate</p>
         </div>
       </div>
+
 
       <div className="temperature-box">
         <p className="temperature-label">Temperatură:</p>
