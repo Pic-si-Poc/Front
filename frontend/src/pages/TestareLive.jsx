@@ -46,9 +46,11 @@ const TestareLive = () => {
   const [umiditateData, setUmiditateData] = useState([]);
   const [temperatura, setTemperatura] = useState(36);
   const [marcaje, setMarcaje] = useState([]);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const bufferRef = useRef({ labels: [], emg: [], ecg: [], umiditate: [] });
-  const windowSize = 100; // 10 secunde * 10 puncte/sec = 100
+  const aiBufferRef = useRef({ ecg: [], emg: [], temp: [], humidity: [], start_time: null });
+  const windowSize = 100;
   const timeRef = useRef(0);
   const startTimestampRef = useRef(Date.now());
 
@@ -56,8 +58,6 @@ const TestareLive = () => {
     const interval = setInterval(() => {
       axios.get("http://localhost:5000/api/live-data").then((res) => {
         const { ecg, emg, humidity, temperature } = res.data;
-
-        console.log("ECG frontend:", ecg, "| EMG frontend:", emg);
 
         if (ecg == null || emg == null || humidity == null || temperature == null) return;
 
@@ -75,10 +75,17 @@ const TestareLive = () => {
           bufferRef.current.ecg.shift();
           bufferRef.current.umiditate.shift();
         }
+
+        if (isCapturing) {
+          aiBufferRef.current.ecg.push(parseInt(ecg));
+          aiBufferRef.current.emg.push(parseInt(emg));
+          aiBufferRef.current.temp.push(parseFloat(temperature));
+          aiBufferRef.current.humidity.push(parseFloat(humidity));
+        }
       });
-    }, 100); // 0.1 secunde
+    }, 100);
     return () => clearInterval(interval);
-  }, []);
+  }, [isCapturing]);
 
   useEffect(() => {
     const intervalRender = setInterval(() => {
@@ -108,18 +115,50 @@ const TestareLive = () => {
     return () => clearInterval(intervalSend);
   }, [id_exam]);
 
-  const handleMarcaj = (tip) => {
+  const handleStartCapture = () => {
+    setIsCapturing(true);
+    aiBufferRef.current = {
+      ecg: [],
+      emg: [],
+      temp: [],
+      humidity: [],
+      start_time: new Date().toISOString()
+    };
+  };
+
+  const handleMarcaj = async (tip) => {
     const timestamp = new Date().toISOString();
     const elapsed = Date.now() - startTimestampRef.current;
     const afisajTimp = new Date(elapsed).toISOString().substr(11, 8);
 
     setMarcaje((prev) => [...prev, { timestamp: afisajTimp, tip }]);
 
-    fetch('http://localhost:5000/api/marcaje', {
+    await fetch('http://localhost:5000/api/marcaje', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id_exam, timestamp, tip })
     });
+
+    if (isCapturing) {
+      const aiSample = {
+        id_exam,
+        start_time: aiBufferRef.current.start_time,
+        end_time: new Date().toISOString(),
+        label: tip.toLowerCase(),
+        ecg_data: aiBufferRef.current.ecg,
+        emg_data: aiBufferRef.current.emg,
+        temp_data: aiBufferRef.current.temp,
+        humidity_data: aiBufferRef.current.humidity
+      };
+
+      await fetch('http://localhost:5000/api/ai-sample', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aiSample)
+      });
+
+      setIsCapturing(false);
+    }
   };
 
   const commonX = {
@@ -144,7 +183,7 @@ const TestareLive = () => {
               plugins: { legend: { display: false } },
               scales: {
                 x: commonX,
-                y: { min: 100, max: 400 }
+                y: { min: 300, max: 700 }
               }
             }}
           />
@@ -188,6 +227,7 @@ const TestareLive = () => {
       </div>
 
       <div className="marcaje-buttons">
+        <button className="btn-start" onClick={handleStartCapture}>Începe răspuns</button>
         <button className="btn-sincer" onClick={() => handleMarcaj('Sincer')}>Răspuns Sincer</button>
         <button className="btn-nesincer" onClick={() => handleMarcaj('Nesincer')}>Răspuns Nesincer</button>
         <button className="btn-control" onClick={() => handleMarcaj('Control')}>Întrebare Control</button>
