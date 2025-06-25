@@ -47,6 +47,7 @@ const TestareLive = () => {
   const [temperatura, setTemperatura] = useState(36);
   const [marcaje, setMarcaje] = useState([]);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [aiPrediction, setAiPrediction] = useState(null);
 
   const bufferRef = useRef({ labels: [], emg: [], ecg: [], umiditate: [] });
   const aiBufferRef = useRef({ ecg: [], emg: [], temp: [], humidity: [], start_time: null });
@@ -124,6 +125,28 @@ const TestareLive = () => {
       humidity: [],
       start_time: new Date().toISOString()
     };
+
+    setTimeout(async () => {
+      const sample = {
+        ecg_data: aiBufferRef.current.ecg,
+        emg_data: aiBufferRef.current.emg,
+        temp_data: aiBufferRef.current.temp,
+        humidity_data: aiBufferRef.current.humidity
+      };
+
+      try {
+        const res = await fetch('http://localhost:8000/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sample)
+        });
+        const data = await res.json();
+        setAiPrediction(data.predictie);
+        setTimeout(() => setAiPrediction(null), 4000);
+      } catch (err) {
+        console.error("Eroare la trimiterea către AI:", err);
+      }
+    }, 4000);
   };
 
   const handleMarcaj = async (tip) => {
@@ -183,7 +206,7 @@ const TestareLive = () => {
               plugins: { legend: { display: false } },
               scales: {
                 x: commonX,
-                y: { min: 300, max: 700 }
+                y: { min: 0, max: 250 }
               }
             }}
           />
@@ -213,7 +236,7 @@ const TestareLive = () => {
               plugins: { legend: { display: false } },
               scales: {
                 x: commonX,
-                y: { min: 80, max: 100 }
+                y: { min: 70, max: 100 }
               }
             }}
           />
@@ -232,6 +255,12 @@ const TestareLive = () => {
         <button className="btn-nesincer" onClick={() => handleMarcaj('Nesincer')}>Răspuns Nesincer</button>
         <button className="btn-control" onClick={() => handleMarcaj('Control')}>Întrebare Control</button>
       </div>
+
+      {aiPrediction && (
+        <div className="ai-predict-box">
+          <p><strong>AI:</strong> Răspuns <em>{aiPrediction}</em></p>
+        </div>
+      )}
 
       <div className="marcaje-list">
         <h3>Marcaje înregistrate:</h3>
@@ -252,3 +281,4 @@ const TestareLive = () => {
 };
 
 export default TestareLive;
+ 
