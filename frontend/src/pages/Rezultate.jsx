@@ -10,6 +10,8 @@ const Rezultate = () => {
   const [rezultate, setRezultate] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedExamId, setSelectedExamId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -34,6 +36,23 @@ const Rezultate = () => {
   const handleDetalii = (id_exam) => {
     navigate(`/rezultate/${id_exam}`);
   };
+
+  const handleSterge = (id_exam) => {
+  setSelectedExamId(id_exam);
+  setShowModal(true);
+};
+
+  const confirmStergere = async () => {
+  try {
+    await axios.delete(`http://localhost:5000/api/examinare/${selectedExamId}`);
+    setRezultate(prev => prev.filter(r => r.id_exam !== selectedExamId));
+  } catch (err) {
+    console.error("Eroare la ștergere:", err);
+  } finally {
+    setShowModal(false);
+    setSelectedExamId(null);
+  }
+};
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -85,6 +104,9 @@ const Rezultate = () => {
                 <button className="btn-detalii" onClick={() => handleDetalii(r.id_exam)}>
                   Vezi Detalii
                 </button>
+                <button className="btn-sterge" onClick={() => handleSterge(r.id_exam)}>
+                  Șterge
+                </button>
               </td>
             </tr>
           ))}
@@ -96,6 +118,18 @@ const Rezultate = () => {
         <span>Pagina {currentPage} din {totalPages}</span>
         <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next</button>
       </div>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Confirmare Ștergere</h3>
+            <p>Ești sigur că vrei să ștergi această examinare?</p>
+            <div className="modal-buttons">
+              <button className="btn-confirm" onClick={confirmStergere}>Da, șterge</button>
+              <button className="btn-cancel" onClick={() => setShowModal(false)}>Anulează</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

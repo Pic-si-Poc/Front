@@ -135,7 +135,7 @@ const DetaliiRezultat = () => {
             options={{
               responsive: true,
               plugins: { legend: { display: false } },
-              scales: { y: { min: 150, max: 550 } }
+              scales: { y: { min: 0, max: 250 } }
             }}
           />
           <p className="graph-label">EMG</p>
@@ -159,7 +159,7 @@ const DetaliiRezultat = () => {
             options={{
               responsive: true,
               plugins: { legend: { display: false } },
-              scales: { y: { min: 80, max: 100 } }
+              scales: { y: { min: 70, max: 100 } }
             }}
           />
           <p className="graph-label">Umiditate</p>

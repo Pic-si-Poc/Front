@@ -13,7 +13,7 @@ const Persoane = () => {
     axios.get('http://localhost:5000/api/auth/check', { withCredentials: true })
       .then(res => {
         if (!res.data.loggedIn) {
-          navigate('/'); // redirecționează spre login dacă nu e logat
+          navigate('/');
         }
       });
   }, []);
