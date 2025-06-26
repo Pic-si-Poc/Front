@@ -99,6 +99,10 @@
   background-color: #ffae42;
 }
 
+.btn-evaluare {
+  @apply px-4 py-2 rounded font-semibold transition;
+  background-color: #4291ff;
+}
 .marcaje-list {
   @apply mt-8 bg-white/20 backdrop-blur-md p-6 rounded-xl shadow-lg text-center;
 }

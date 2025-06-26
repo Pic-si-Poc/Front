@@ -135,7 +135,7 @@ const DetaliiRezultat = () => {
             options={{
               responsive: true,
               plugins: { legend: { display: false } },
-              scales: { y: { min: 0, max: 250 } }
+              scales: { y: { min: 0, max: 750 } }
             }}
           />
           <p className="graph-label">EMG</p>

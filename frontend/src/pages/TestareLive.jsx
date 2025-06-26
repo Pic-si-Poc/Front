@@ -206,7 +206,7 @@ const TestareLive = () => {
               plugins: { legend: { display: false } },
               scales: {
                 x: commonX,
-                y: { min: 0, max: 250 }
+                y: { min: 350, max: 600 }
               }
             }}
           />
@@ -221,7 +221,7 @@ const TestareLive = () => {
               plugins: { legend: { display: false } },
               scales: {
                 x: commonX,
-                y: { min: 300, max: 800 }
+                y: { min: 200, max: 800 }
               }
             }}
           />
@@ -254,6 +254,7 @@ const TestareLive = () => {
         <button className="btn-sincer" onClick={() => handleMarcaj('Sincer')}>Răspuns Sincer</button>
         <button className="btn-nesincer" onClick={() => handleMarcaj('Nesincer')}>Răspuns Nesincer</button>
         <button className="btn-control" onClick={() => handleMarcaj('Control')}>Întrebare Control</button>
+        <button className="btn-evaluare">Evaluare Răspuns AI</button>
       </div>
 
       {aiPrediction && (
